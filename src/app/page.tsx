@@ -17,6 +17,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 
 type Message = {
@@ -29,12 +30,11 @@ export default function Home() {
     {
       role: 'assistant',
       content:
-        'Welcome to Contextual Chat! Please provide your name and a topic to begin.',
+        'Welcome to Contextual Chat! Please provide your name and tell me what you need.',
     },
   ]);
   const [name, setName] = useState('');
-  const [topic, setTopic] = useState('');
-  const [message, setMessage] = useState('');
+  const [request, setRequest] = useState('');
   const [pending, setPending] = useState(false);
   const { toast } = useToast();
 
@@ -52,22 +52,24 @@ export default function Home() {
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    if (!message.trim() || !name.trim() || !topic.trim()) {
+    if (!request.trim() || !name.trim()) {
       toast({
         title: 'Missing Information',
-        description: 'Please provide your name, a topic, and a message.',
+        description: 'Please provide your name and your request.',
         variant: 'destructive',
       });
       return;
     }
 
     setPending(true);
-    const userMessage: Message = { role: 'user', content: message };
+    const userMessage: Message = { role: 'user', content: request };
     setConversation((prev) => [...prev, userMessage]);
-    setMessage('');
+    
+    // We keep the request in the text area for context, but clear it for the next message
+    // setRequest(''); 
 
     try {
-      const assistantResponse = await getAssistantResponse(name, topic);
+      const assistantResponse = await getAssistantResponse(name, request);
       const assistantMessage: Message = {
         role: 'assistant',
         content: assistantResponse,
@@ -97,8 +99,7 @@ export default function Home() {
             Contextual Chat
           </CardTitle>
           <CardDescription className="pt-1">
-            Enter your name and a topic, then start chatting. I'll do my best
-            to respond in context!
+            Enter your name and describe your request. I'll generate a contextual email for you.
           </CardDescription>
         </CardHeader>
         <CardContent className="flex-1 p-0">
@@ -139,7 +140,7 @@ export default function Home() {
         </CardContent>
         <CardFooter className="border-t p-4 lg:p-6">
           <form onSubmit={handleSubmit} className="flex w-full flex-col gap-4">
-            <div className="grid sm:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 gap-4">
               <div className="grid gap-1.5">
                 <Label htmlFor="name">Your Name</Label>
                 <Input
@@ -153,39 +154,31 @@ export default function Home() {
                 />
               </div>
               <div className="grid gap-1.5">
-                <Label htmlFor="topic">Topic</Label>
-                <Input
-                  id="topic"
-                  name="topic"
-                  placeholder="e.g., Space Exploration"
-                  value={topic}
-                  onChange={(e) => setTopic(e.target.value)}
+                <Label htmlFor="request">What do you want?</Label>
+                <Textarea
+                  id="request"
+                  name="request"
+                  placeholder="e.g., follow up on the meeting and confirm next steps..."
+                  value={request}
+                  onChange={(e) => setRequest(e.target.value)}
                   required
                   disabled={pending}
+                  className="min-h-[60px]"
                 />
               </div>
             </div>
             <div className="flex items-center gap-2">
-              <Input
-                name="message"
-                placeholder="Type your message..."
-                autoComplete="off"
-                value={message}
-                onChange={(e) => setMessage(e.target.value)}
-                required
-                disabled={pending}
-              />
               <Button
                 type="submit"
-                size="icon"
-                disabled={pending || !message.trim()}
+                className="w-full"
+                disabled={pending || !request.trim()}
               >
                 {pending ? (
                   <Loader2 className="h-5 w-5 animate-spin" />
                 ) : (
-                  <Send className="h-5 w-5" />
+                 <> <Send className="h-5 w-5" /> Generate Email </>
                 )}
-                <span className="sr-only">Send message</span>
+                <span className="sr-only">Generate Email</span>
               </Button>
             </div>
           </form>
