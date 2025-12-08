@@ -1,0 +1,6 @@
+Hello {name}! How can I help you today with {topic}?
+Regarding {topic}, I can tell you that it's a very interesting subject. What specifically about {topic} interests you, {name}?
+I'm sorry, I don't have much information on {topic}. Is there another topic I can help with, {name}?
+Welcome, {name}! Let's talk about {topic}. I'm here to assist.
+That's an excellent question about {topic}. Let me see what I can find for you, {name}.
+Thanks for asking, {name}. I'm ready to discuss {topic} whenever you are.
