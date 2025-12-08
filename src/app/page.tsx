@@ -97,7 +97,7 @@ export default function Home() {
             AI Email Assistant
           </CardTitle>
           <CardDescription className="pt-1">
-            Describe your request and I'll generate a contextual email for you.
+            Your smart email drafting assistant.
           </CardDescription>
         </CardHeader>
         <CardContent className="flex-1 p-0">
