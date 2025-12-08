@@ -94,7 +94,7 @@ export default function Home() {
             <span className="flex h-10 w-10 items-center justify-center rounded-full bg-primary text-primary-foreground">
               <Bot className="h-6 w-6" />
             </span>
-            Contextual Chat
+            AI Email Assistant
           </CardTitle>
           <CardDescription className="pt-1">
             Describe your request and I'll generate a contextual email for you.

@@ -3,8 +3,8 @@ import './globals.css';
 import { Toaster } from '@/components/ui/toaster';
 
 export const metadata: Metadata = {
-  title: 'Contextual Chat',
-  description: 'An intelligent chat assistant.',
+  title: 'AI Email Assistant',
+  description: 'Your smart email drafting assistant.',
 };
 
 export default function RootLayout({
