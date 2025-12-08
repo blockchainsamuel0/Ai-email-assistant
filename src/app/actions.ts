@@ -116,7 +116,13 @@ function pickBestTemplates(
     scored.push([s, t, toks]);
   }
   scored.sort((a, b) => b[0] - a[0]);
-  const top = scored.slice(0, topK).map((item) => item[1]);
+
+  let topScored = scored.filter(([score]) => score > 0);
+  if (topScored.length === 0) {
+    topScored = scored;
+  }
+  
+  const top = topScored.slice(0, topK).map((item) => item[1]);
   return [top, reqToks];
 }
 
