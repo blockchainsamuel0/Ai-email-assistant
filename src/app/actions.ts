@@ -69,6 +69,8 @@ function fillPlaceholders(text: string, variables: Record<string, string>): stri
   for (const [key, value] of Object.entries(variables)) {
     result = result.replace(new RegExp(`{${key}}`, 'g'), value);
   }
+  // Replace Your Name with the actual name
+  result = result.replace(/Your Name/g, variables.your_name || "Assistant");
   return result;
 }
 
@@ -101,7 +103,8 @@ function assembleEmail(chosenTemplates: Template[], variables: Record<string, st
 }
 
 export async function getAssistantResponse(
-  name: string,
+  yourName: string,
+  recipientName: string,
   userRequest: string
 ): Promise<string> {
   // Simulate network delay
@@ -118,7 +121,7 @@ export async function getAssistantResponse(
     
     // These are default variables, they can be expanded upon
     const variables = {
-        name: name || "Friend",
+        name: recipientName || "Friend",
         topic: "your request",
         date: new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric' }),
         time: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
@@ -126,7 +129,7 @@ export async function getAssistantResponse(
         product: "our product",
         amount: "$100",
         location: "the office",
-        your_name: "Assistant",
+        your_name: yourName || "Assistant",
         greeting: "Hi",
         action: "completed the task",
     };

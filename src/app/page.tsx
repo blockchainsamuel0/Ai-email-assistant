@@ -30,10 +30,11 @@ export default function Home() {
     {
       role: 'assistant',
       content:
-        'Welcome to Contextual Chat! Please provide your name and tell me what you need.',
+        'Welcome! Fill out the fields below and I will generate a contextual email for you.',
     },
   ]);
-  const [name, setName] = useState('');
+  const [yourName, setYourName] = useState('');
+  const [recipientName, setRecipientName] = useState('');
   const [request, setRequest] = useState('');
   const [pending, setPending] = useState(false);
   const { toast } = useToast();
@@ -52,10 +53,10 @@ export default function Home() {
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    if (!request.trim() || !name.trim()) {
+    if (!request.trim() || !yourName.trim() || !recipientName.trim()) {
       toast({
         title: 'Missing Information',
-        description: 'Please provide your name and your request.',
+        description: 'Please fill out all fields.',
         variant: 'destructive',
       });
       return;
@@ -64,12 +65,9 @@ export default function Home() {
     setPending(true);
     const userMessage: Message = { role: 'user', content: request };
     setConversation((prev) => [...prev, userMessage]);
-    
-    // We keep the request in the text area for context, but clear it for the next message
-    // setRequest(''); 
 
     try {
-      const assistantResponse = await getAssistantResponse(name, request);
+      const assistantResponse = await getAssistantResponse(yourName, recipientName, request);
       const assistantMessage: Message = {
         role: 'assistant',
         content: assistantResponse,
@@ -99,7 +97,7 @@ export default function Home() {
             Contextual Chat
           </CardTitle>
           <CardDescription className="pt-1">
-            Enter your name and describe your request. I'll generate a contextual email for you.
+            Describe your request and I'll generate a contextual email for you.
           </CardDescription>
         </CardHeader>
         <CardContent className="flex-1 p-0">
@@ -140,32 +138,44 @@ export default function Home() {
         </CardContent>
         <CardFooter className="border-t p-4 lg:p-6">
           <form onSubmit={handleSubmit} className="flex w-full flex-col gap-4">
-            <div className="grid grid-cols-1 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="grid gap-1.5">
-                <Label htmlFor="name">Your Name</Label>
+                <Label htmlFor="yourName">Your Name</Label>
                 <Input
-                  id="name"
-                  name="name"
+                  id="yourName"
+                  name="yourName"
                   placeholder="e.g., Jane Doe"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
+                  value={yourName}
+                  onChange={(e) => setYourName(e.target.value)}
                   required
                   disabled={pending}
                 />
               </div>
               <div className="grid gap-1.5">
-                <Label htmlFor="request">What do you want?</Label>
-                <Textarea
-                  id="request"
-                  name="request"
-                  placeholder="e.g., follow up on the meeting and confirm next steps..."
-                  value={request}
-                  onChange={(e) => setRequest(e.target.value)}
+                <Label htmlFor="recipientName">Recipient's Name</Label>
+                <Input
+                  id="recipientName"
+                  name="recipientName"
+                  placeholder="e.g., John Smith"
+                  value={recipientName}
+                  onChange={(e) => setRecipientName(e.target.value)}
                   required
                   disabled={pending}
-                  className="min-h-[60px]"
                 />
               </div>
+            </div>
+            <div className="grid gap-1.5">
+              <Label htmlFor="request">What do you want?</Label>
+              <Textarea
+                id="request"
+                name="request"
+                placeholder="e.g., follow up on the meeting and confirm next steps..."
+                value={request}
+                onChange={(e) => setRequest(e.target.value)}
+                required
+                disabled={pending}
+                className="min-h-[60px]"
+              />
             </div>
             <div className="flex items-center gap-2">
               <Button
