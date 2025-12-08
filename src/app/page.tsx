@@ -30,7 +30,7 @@ export default function Home() {
     {
       role: 'assistant',
       content:
-        'Welcome! Fill out the fields below and I will generate a contextual email for you.',
+        'Welcome! Fill out the fields below and I will generate an email for you.',
     },
   ]);
   const [yourName, setYourName] = useState('');
