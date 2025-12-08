@@ -55,9 +55,13 @@ type Template = {
 // -----------------------
 // Utilities
 // -----------------------
-async function loadTemplates(filePath: string): Promise<Template[]> {
+async function loadTemplates(corpusUrl: string): Promise<Template[]> {
   try {
-    const raw = await fs.readFile(filePath, 'utf-8');
+    const response = await fetch(corpusUrl);
+    if (!response.ok) {
+        throw new Error(`Failed to fetch corpus: ${response.statusText}`);
+    }
+    const raw = await response.text();
     const blocks = raw.split('\n---\n').filter((b) => b.trim());
     const templates: Template[] = [];
     for (const b of blocks) {
@@ -161,8 +165,9 @@ export async function getAssistantResponse(
   await new Promise((resolve) => setTimeout(resolve, 500));
 
   try {
-    const corpusPath = path.join(process.cwd(), 'src', 'lib', 'corpus.txt');
-    const templates = await loadTemplates(corpusPath);
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:9002';
+    const corpusUrl = new URL('/corpus.txt', appUrl).toString();
+    const templates = await loadTemplates(corpusUrl);
     
     const variables = {
       name: recipientName,
