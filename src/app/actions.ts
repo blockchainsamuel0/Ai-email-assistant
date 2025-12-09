@@ -167,7 +167,8 @@ export async function getAssistantResponse(
   await new Promise((resolve) => setTimeout(resolve, 500));
 
   try {
-    const templates = await loadTemplates('public/corpus.txt');
+    const corpusPath = path.join(process.cwd(), 'public', 'corpus.txt');
+    const templates = await loadTemplates(corpusPath);
     
     const variables = {
       name: recipientName,
