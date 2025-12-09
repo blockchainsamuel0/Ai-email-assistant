@@ -1,8 +1,7 @@
 'use server';
 
-import fs from 'fs/promises';
-import path from 'path';
 import { z } from 'zod';
+import { CORPUS_DATA } from '@/data/corpus';
 
 // -----------------------
 // Simple stopwords list
@@ -55,24 +54,17 @@ type Template = {
 // -----------------------
 // Utilities
 // -----------------------
-async function loadTemplates(): Promise<Template[]> {
-  try {
-    const corpusPath = path.join(process.cwd(), 'public', 'corpus.txt');
-    const raw = await fs.readFile(corpusPath, 'utf-8');
-    const blocks = raw.split('\n---\n').filter((b) => b.trim());
-    const templates: Template[] = [];
-    for (const b of blocks) {
-      const lines = b.split('\n');
-      const greeting = lines[0]?.trim() || '';
-      const closing = lines[lines.length - 1]?.trim() || '';
-      const body = lines.length > 2 ? lines.slice(1, -1).join('\n').trim() : '';
-      templates.push({ raw: b, greeting, body, closing });
-    }
-    return templates;
-  } catch (error) {
-    console.error('Error loading corpus:', error);
-    return [];
+function loadTemplates(): Template[] {
+  const blocks = CORPUS_DATA.split('\n---\n').filter((b) => b.trim());
+  const templates: Template[] = [];
+  for (const b of blocks) {
+    const lines = b.split('\n');
+    const greeting = lines[0]?.trim() || '';
+    const closing = lines[lines.length - 1]?.trim() || '';
+    const body = lines.length > 2 ? lines.slice(1, -1).join('\n').trim() : '';
+    templates.push({ raw: b, greeting, body, closing });
   }
+  return templates;
 }
 
 function tokenize(text: string): string[] {
@@ -168,7 +160,7 @@ export async function getAssistantResponse(
   await new Promise((resolve) => setTimeout(resolve, 500));
 
   try {
-    const templates = await loadTemplates();
+    const templates = loadTemplates();
     
     const variables = {
       name: recipientName,
